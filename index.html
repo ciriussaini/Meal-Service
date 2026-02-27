@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Home Meal Service</title>
+    <!-- Link to the external stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation Bar: visible only when logged in -->
+    <nav id="navbar" class="hidden">
+        <div class="nav-container">
+            <div class="nav-logo">Community Home Meal Service</div>
+            <div class="nav-links">
+                <!-- Displays the current logged in user's name -->
+                <span id="nav-user-name"></span>
+                <button onclick="goHome()" class="nav-btn btn-outline"
+                    style="border:none; color: var(--secondary-color);">Home</button>
+                <button onclick="logout()" class="nav-btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container containing multiple sections/pages -->
+    <main id="app-content">
+
+        <!-- 1. Login Page -->
+        <section id="page-login" class="page active">
+            <div class="login-container">
+                <div class="header-text">
+                    <h1>Community Home Meal Service</h1>
+                    <p class="subtitle">Find and share home-cooked meals in your neighborhood</p>
+                    <p class="description">This app helps people find home-cooked meals from local cooks.<br><br>In
+                        India this type of system is often called a 'Tiffin Service', but this app is designed for any
+                        community worldwide.</p>
+                </div>
+                <div class="card login-card">
+                    <h2>Login</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" required placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" required placeholder="Enter password">
+                        </div>
+                        <p id="login-error" class="error-msg hidden">Invalid username or password.</p>
+                        <button type="submit" class="btn btn-primary btn-full">Login</button>
+                    </form>
+
+                    <!-- Displaying sample credentials for ease of testing -->
+                    <div class="demo-creds">
+                        <p><strong>Admin Check:</strong> admin / admin123</p>
+                        <p><strong>User Check:</strong> user / user123</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. User Dashboard -->
+        <section id="page-user-dashboard" class="page">
+            <div class="dashboard-header">
+                <h2>Local Meal Providers</h2>
+                <button onclick="showPage('page-provider-request')" class="btn btn-primary">Request to Become Meal
+                    Provider</button>
+            </div>
+
+            <!-- Provider Search -->
+            <div class="form-group">
+                <input type="text" id="provider-search" placeholder="Search Meal Providers..."
+                    oninput="filterProviders()">
+            </div>
+
+            <!-- Provider list populated by JavaScript -->
+            <div id="provider-list" class="card-grid"></div>
+
+            <!-- My Orders -->
+            <div class="user-section" style="margin-top: 40px;">
+                <h3
+                    style="margin-bottom: 16px; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; color: var(--secondary-color);">
+                    Your Orders</h3>
+                <div id="user-orders" class="list-container"></div>
+            </div>
+
+            <!-- My Provider Requests -->
+            <div class="user-section" style="margin-top: 40px;">
+                <h3
+                    style="margin-bottom: 16px; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; color: var(--secondary-color);">
+                    My Provider Requests</h3>
+                <div id="user-requests" class="list-container"></div>
+            </div>
+        </section>
+
+        <!-- 3. Admin Dashboard -->
+        <section id="page-admin-dashboard" class="page">
+            <h2>Admin Dashboard</h2>
+
+            <div class="admin-section">
+                <h3>Pending Provider Requests</h3>
+                <!-- Pending requests populated by JavaScript -->
+                <div id="pending-requests" class="card-grid"></div>
+            </div>
+
+            <div class="admin-section">
+                <h3>Approved Providers</h3>
+                <!-- Approved providers list populated by JavaScript -->
+                <div id="approved-providers" class="list-container"></div>
+            </div>
+
+            <div class="admin-section">
+                <h3>All Orders</h3>
+                <!-- Order list populated by JavaScript -->
+                <div id="all-orders" class="list-container"></div>
+            </div>
+        </section>
+
+        <!-- 4. Provider Menu Page -->
+        <section id="page-provider-menu" class="page">
+            <button onclick="goHome()" class="btn btn-back">&larr; Back to Providers</button>
+            <!-- Menu container populated by JavaScript -->
+            <div id="menu-container" class="menu-container form-container">
+            </div>
+        </section>
+
+        <!-- 5. Order Form Page -->
+        <section id="page-order-form" class="page">
+            <button onclick="goHome()" class="btn btn-back">&larr; Back to Dashboard</button>
+            <div class="form-container card">
+                <h2>Place Order</h2>
+                <h3 id="order-provider-name" style="margin-bottom: 20px; color: var(--text-muted);"></h3>
+
+                <form id="order-form">
+                    <input type="hidden" id="order-provider-id">
+
+                    <div class="form-group">
+                        <label for="customer-name">Customer Name</label>
+                        <input type="text" id="customer-name" required placeholder="Your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer-phone">Phone Number</label>
+                        <input type="tel" id="customer-phone" required placeholder="Ex: 555-123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meal-type">Meal Type</label>
+                        <select id="meal-type" required>
+                            <option value="">-- Select Meal Type --</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meal-quantity">Quantity</label>
+                        <input type="number" id="meal-quantity" min="1" max="20" value="1" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full" style="margin-top: 24px;">Place
+                        Order</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 6. Provider Request Page -->
+        <section id="page-provider-request" class="page">
+            <button onclick="goHome()" class="btn btn-back">&larr; Back to Dashboard</button>
+            <div class="form-container card">
+                <h2 style="margin-bottom: 24px;">Request to Become Meal Provider</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Fill out this application.
+                    Our admin team will review it shortly to add you to the platform.</p>
+
+                <form id="provider-request-form">
+                    <div class="form-group">
+                        <label for="req-name">Your Name</label>
+                        <input type="text" id="req-name" required placeholder="Full Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="req-kitchen">Kitchen Name</label>
+                        <input type="text" id="req-kitchen" required placeholder="Ex: Mom's Kitchen">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="req-phone">Phone Number</label>
+                        <input type="tel" id="req-phone" required placeholder="Ex: 555-987-6543">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="req-menu">Sample Menu (List lunch & dinner items)</label>
+                        <textarea id="req-menu" rows="6" required
+                            placeholder="Lunch:&#10;- Rice&#10;- Dal&#10;- Roti&#10;&#10;Dinner:&#10;- Curry&#10;- Salad"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full" style="margin-top: 24px;">Submit
+                        Request</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Configuration and Data Setup -->
+    <script src="config.js"></script>
+    <!-- App logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>
